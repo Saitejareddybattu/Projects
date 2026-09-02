@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Feedback Portal</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <!-- Background particles -->
+    <div class="particles">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+
+    <!-- Top Navigation -->
+    <header class="topbar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                <i class="fa-solid fa-comments"></i>
+            </div>
+
+            <div>
+                <h1>Feedback Portal</h1>
+                <p>We value your feedback and reviews✨</p>
+            </div>
+
+        </div>
+
+
+        <div class="status">
+            <span class="pulse"></span>
+            <span>We listen. We improve. We grow.</span>
+        </div>
+
+    </header>
+
+
+    <!-- Main Layout -->
+    <main class="main-container">
+
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+
+            <div class="side-item active">
+
+                <i class="fa-solid fa-house"></i>
+
+                <span>Home</span>
+
+            </div>
+
+
+            <div class="side-item">
+
+                <i class="fa-solid fa-pen-to-square"></i>
+
+                <span>Submit</span>
+
+            </div>
+
+
+            <div class="side-item">
+
+                <i class="fa-solid fa-clipboard-list"></i>
+
+                <span>Feedback</span>
+
+            </div>
+
+
+            <div class="side-item">
+
+                <i class="fa-solid fa-circle-info"></i>
+
+                <span>About</span>
+
+            </div>
+
+
+            <button
+                id="themeToggle"
+                class="theme-toggle"
+                title="Toggle theme">
+
+                <i class="fa-solid fa-moon"></i>
+
+            </button>
+
+        </aside>
+
+
+
+        <!-- Feedback Card -->
+        <section class="feedback-card">
+
+            <div class="form-header">
+
+                <span class="small-label">
+                    FEEDBACK FORM
+                </span>
+
+                <h2>
+                    Share Your Feedback
+                    <span>🚀</span>
+                </h2>
+
+                <p>
+                    Help us improve and serve you better 💙
+                </p>
+
+            </div>
+
+
+            <!-- Feedback Form -->
+            <form
+                id="feedbackForm"
+                method="POST"
+                action="/"
+                novalidate>
+
+
+                <!-- Name -->
+                <div class="input-group">
+
+                    <label for="name">
+                        <i class="fa-regular fa-user"></i>
+                        Your Name
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            placeholder="Enter your full name"
+                            autocomplete="name"
+                            required>
+
+                        <i class="fa-solid fa-check input-check"></i>
+
+                    </div>
+
+                    <small class="error-message" id="nameError"></small>
+
+                </div>
+
+
+
+                <!-- Email -->
+                <div class="input-group">
+
+                    <label for="email">
+
+                        <i class="fa-regular fa-envelope"></i>
+
+                        Your Email
+
+                    </label>
+
+
+                    <div class="input-wrapper">
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Enter your email address"
+                            autocomplete="email"
+                            required>
+
+                        <i class="fa-solid fa-check input-check"></i>
+
+                    </div>
+
+                    <small
+                        class="error-message"
+                        id="emailError">
+                    </small>
+
+                </div>
+
+
+
+                <!-- Message -->
+                <div class="input-group">
+
+                    <div class="message-header">
+
+                        <label for="message">
+
+                            <i class="fa-regular fa-message"></i>
+
+                            Your Feedback
+
+                        </label>
+
+                        <span id="charCount">
+                            0 / 500
+                        </span>
+
+                    </div>
+
+
+                    <div class="textarea-wrapper">
+
+                        <textarea
+                            id="message"
+                            name="message"
+                            rows="5"
+                            maxlength="500"
+                            placeholder="Write your feedback here..."
+                            required></textarea>
+
+                    </div>
+
+                    <small
+                        class="error-message"
+                        id="messageError">
+                    </small>
+
+                </div>
+
+
+
+                <!-- Submit Button -->
+                <button
+                    type="submit"
+                    class="submit-btn"
+                    id="submitBtn">
+
+                    <span class="btn-content">
+
+                        <i class="fa-regular fa-paper-plane"></i>
+
+                        <span>Submit Feedback</span>
+
+                    </span>
+
+                    <span class="loader"></span>
+
+                </button>
+
+            </form>
+
+
+
+            <!-- View Feedback -->
+            <form
+                action="/view-feedback"
+                method="GET">
+
+                <button
+                    type="submit"
+                    class="view-btn">
+
+                    <i class="fa-regular fa-eye"></i>
+
+                    View Submitted Feedback
+
+                </button>
+
+            </form>
+
+
+
+            <!-- Privacy -->
+            <div class="privacy">
+
+                <i class="fa-solid fa-lock"></i>
+
+                <span>
+                    Your feedback is safe with us and will never be shared.
+                </span>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- Right Information Card -->
+        <section class="info-card">
+
+
+            <!-- Illustration -->
+            <div class="illustration">
+
+                <div class="orbit orbit-one"></div>
+
+                <div class="orbit orbit-two"></div>
+
+                <div class="center-message">
+
+                    <i class="fa-regular fa-comments"></i>
+
+                </div>
+
+
+                <div class="floating-message message-one">
+
+                    <i class="fa-solid fa-heart"></i>
+
+                </div>
+
+
+                <div class="floating-message message-two">
+
+                    <i class="fa-solid fa-star"></i>
+
+                </div>
+
+
+                <div class="floating-message message-three">
+
+                    <i class="fa-solid fa-comment"></i>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="info-content">
+
+                <span class="small-label">
+                    WHY IT MATTERS
+                </span>
+
+                <h2>
+                    Your Feedback Matters
+                </h2>
+
+
+                <div class="gradient-line"></div>
+
+
+
+                <!-- Benefit 1 -->
+                <div class="benefit">
+
+                    <div class="benefit-icon">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Improve Quality
+                        </h3>
+
+                        <p>
+                            Your feedback helps us improve our services
+                            and deliver better experiences.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- Benefit 2 -->
+                <div class="benefit">
+
+                    <div class="benefit-icon">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Make an Impact
+                        </h3>
+
+                        <p>
+                            You are an important part of our journey
+                            towards excellence.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- Benefit 3 -->
+                <div class="benefit">
+
+                    <div class="benefit-icon">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Drive Innovation
+                        </h3>
+
+                        <p>
+                            Your ideas inspire us to innovate
+                            and grow continuously.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- Footer -->
+    <footer>
+
+        Made with
+        <span>❤️</span>
+        using
+        <strong>Flask</strong>,
+        <strong>FastAPI</strong>,
+        <strong>Kubernetes</strong>
+        &
+        <strong>Docker</strong>
+
+    </footer>
+
+
+
+    <!-- Toast Notification -->
+    <div
+        id="toast"
+        class="toast">
+
+        <div class="toast-icon">
+            <i class="fa-solid fa-check"></i>
+        </div>
+
+        <div>
+
+            <strong id="toastTitle">
+                Success
+            </strong>
+
+            <p id="toastMessage">
+                Feedback submitted successfully.
+            </p>
+
+        </div>
+
+        <button id="closeToast">
+            ×
+        </button>
+
+    </div>
+
+
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,32 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+
+metadata:
+  name: poc-service-template
+  title: POC Service Template
+
+spec:
+  owner: platform-team
+  type: service
+
+  parameters:
+    - title: Service Information
+      required:
+        - serviceName
+
+      properties:
+        serviceName:
+          title: Service Name
+          type: string
+
+  steps:
+    - id: fetch-base
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          serviceName: ${{ parameters.serviceName }}
+
+  output:
+    links:
+      - title: Service Created

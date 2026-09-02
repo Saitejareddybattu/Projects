@@ -1,0 +1,16 @@
+backend:
+  image: saiteja4751/backend:v9
+  replicas: 5
+  servicePort: 8000
+
+frontend:
+  image: saiteja4751/frontend:v9
+  replicas: 5
+  servicePort: 5000
+  nodePort: 30007
+
+mysql:
+  image: mysql:8.0
+  rootPassword: rootpass ##root password for mysql
+  database: feedback_db
+  servicePort: 3306
