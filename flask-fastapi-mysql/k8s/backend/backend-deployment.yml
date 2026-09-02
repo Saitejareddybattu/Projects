@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: backend-deployment
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: backend
+
+  template:
+    metadata:
+      labels:
+        app: backend
+
+    spec:
+      containers:
+      - name: backend-container
+        image: saiteja4751/backend:v3
+        imagePullPolicy: Always
+
+        ports:
+        - containerPort: 8000
+
+        env:
+        - name: DB_HOST
+          value: mysql-service
+
+        - name: DB_USER
+          value: root
+
+        - name: DB_PASSWORD
+          value: root
+
+        - name: DB_NAME
+          value: feedback_db

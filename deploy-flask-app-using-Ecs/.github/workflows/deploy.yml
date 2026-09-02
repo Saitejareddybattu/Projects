@@ -1,0 +1,100 @@
+name: CI/CD Flask to ECR and ECS
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPO: flask-ecr-app
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Check if ECR Repository Exists, Create if Not
+      id: ecr
+      run: |
+        set -e
+        REPO_URI=$(aws ecr describe-repositories \
+          --repository-names $ECR_REPO \
+          --query "repositories[0].repositoryUri" \
+          --output text 2>/dev/null || true)
+
+        if [ -z "$REPO_URI" ]; then
+          echo "Creating ECR repository..."
+          REPO_URI=$(aws ecr create-repository \
+            --repository-name $ECR_REPO \
+            --query "repository.repositoryUri" \
+            --output text)
+        else
+          echo "ECR repository already exists."
+        fi
+
+        echo "REPO_URI=$REPO_URI" >> $GITHUB_ENV
+
+    - name: Login to Amazon ECR
+      run: |
+        aws ecr get-login-password --region $AWS_REGION \
+          | docker login --username AWS --password-stdin $REPO_URI
+
+    - name: Build Docker Image
+      run: docker build -t $REPO_URI:latest ./app
+
+    - name: Push Docker Image
+      run: docker push $REPO_URI:latest
+
+    - name: Get Subnet IDs
+      id: subnets
+      run: |
+        SUBNETS=$(aws ec2 describe-subnets --query "Subnets[].SubnetId" --output text)
+        echo "SUBNET_IDS=$SUBNETS" >> $GITHUB_ENV
+
+    - name: Get Default Security Group ID
+      id: sg
+      run: |
+        SG_ID=$(aws ec2 describe-security-groups \
+          --filters Name=group-name,Values=default \
+          --query "SecurityGroups[0].GroupId" \
+          --output text)
+        echo "SECURITY_GROUP_ID=$SG_ID" >> $GITHUB_ENV
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.5.7
+
+    - name: Terraform Init
+      working-directory: terraform
+      run: terraform init
+
+    - name: Terraform Destroy (clean up old ECS services)
+      working-directory: terraform
+      continue-on-error: true
+      env:
+        TF_VAR_ecr_repo_name: ${{ env.ECR_REPO }}
+        TF_VAR_ecr_image_uri: ${{ env.REPO_URI }}:latest
+        TF_VAR_subnet_ids: ${{ env.SUBNET_IDS }}
+        TF_VAR_security_group_id: ${{ env.SECURITY_GROUP_ID }}
+      run: terraform destroy -auto-approve
+
+    - name: Terraform Apply (Provision ECS + Service)
+      working-directory: terraform
+      env:
+        TF_VAR_ecr_repo_name: ${{ env.ECR_REPO }}
+        TF_VAR_ecr_image_uri: ${{ env.REPO_URI }}:latest
+        TF_VAR_subnet_ids: ${{ env.SUBNET_IDS }}
+        TF_VAR_security_group_id: ${{ env.SECURITY_GROUP_ID }}
+      run: terraform apply -auto-approve
