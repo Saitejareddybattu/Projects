@@ -1,0 +1,43 @@
+version: '3'
+services:
+  webserver:
+    build: .
+    ports:
+      - "8080:8080"
+    command: airflow webserver
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow_pass@postgres/airflow
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./dags:/usr/local/airflow/dags
+
+  scheduler:
+    build: .
+    command: airflow scheduler
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow_pass@postgres/airflow
+    depends_on:
+      - webserver
+
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow_pass
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:latest
+
+volumes:
+  postgres_data: {}
+
+networks:
+  default:
+    driver: bridge

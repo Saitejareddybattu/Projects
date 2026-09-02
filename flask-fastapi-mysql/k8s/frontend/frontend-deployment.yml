@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: frontend-deployment
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: frontend
+
+  template:
+    metadata:
+      labels:
+        app: frontend
+
+    spec:
+      containers:
+      - name: frontend-container
+        image: saiteja4751/frontend:v5
+        imagePullPolicy: Always
+
+        ports:
+        - containerPort: 5000
+
+        env:
+        - name: FASTAPI_URL
+          value: http://backend-service:8000
